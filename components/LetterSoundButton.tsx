@@ -56,7 +56,9 @@ const LetterSoundButton: React.FC<LetterSoundButtonProps> = ({ char, name }) => 
     try {
       const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
       if (!apiKey) {
-        throw new Error("Gemini API key is missing. Please set GEMINI_API_KEY in your environment.");
+        alert("تێبینی: کلیلێ API یێ نەدیارە. ژ کەرەما خوە کلیلێ GEMINI_API_KEY ل ناڤ Settings دا زێدە بکە.\n(Note: API Key missing. Please add GEMINI_API_KEY to settings.)");
+        setIsLoading(false);
+        return;
       }
       const ai = new GoogleGenAI({ apiKey });
       const prompt = `Say only the phonetic sound of the Kurdish character "${char}" once, clearly and slowly. Do not say any other words.`;
