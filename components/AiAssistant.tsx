@@ -36,7 +36,11 @@ const AiAssistant: React.FC<AiAssistantProps> = ({ currentLetter, theme }) => {
     setIsTyping(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
+      if (!apiKey) {
+        throw new Error("Gemini API key is missing.");
+      }
+      const ai = new GoogleGenAI({ apiKey });
       const prompt = `Hûn mamosteyekî kurdî yê bi zaravayê Badînî (Behdîni) ne. 
         Bi tenê bi zaravayê Badînî û bi tîpên erebî (ئەلفبێی ئارامی) bersiv bidin.
         Current letter context: ${currentLetter ? currentLetter.char + ' (' + currentLetter.name + ')' : 'None'}.

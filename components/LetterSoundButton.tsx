@@ -29,7 +29,14 @@ const LetterSoundButton: React.FC<LetterSoundButtonProps> = ({ char, name }) => 
     sampleRate: number,
     numChannels: number,
   ): Promise<AudioBuffer> => {
-    const dataInt16 = new Int16Array(data.buffer);
+    // Ensure we correctly view the bytes as Int16.
+    // data.buffer might be larger than data.byteLength if it's a shared buffer,
+    // but here it's freshly created. However, offset might be needed.
+    const dataInt16 = new Int16Array(
+      data.buffer,
+      data.byteOffset,
+      data.byteLength / 2
+    );
     const frameCount = dataInt16.length / numChannels;
     const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
 
@@ -47,7 +54,11 @@ const LetterSoundButton: React.FC<LetterSoundButtonProps> = ({ char, name }) => 
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
+      if (!apiKey) {
+        throw new Error("Gemini API key is missing. Please set GEMINI_API_KEY in your environment.");
+      }
+      const ai = new GoogleGenAI({ apiKey });
       const prompt = `Say only the phonetic sound of the Kurdish character "${char}" once, clearly and slowly. Do not say any other words.`;
 
       const response = await ai.models.generateContent({
@@ -67,7 +78,14 @@ const LetterSoundButton: React.FC<LetterSoundButtonProps> = ({ char, name }) => 
       if (base64Audio) {
         setIsLoading(false);
         setIsPlaying(true);
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+        const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
+        const audioContext = new AudioContextClass({ sampleRate: 24000 });
+        
+        // Ensure context is running (fixes some browser idle issues)
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume();
+        }
+
         const bytes = decodeBase64(base64Audio);
         const audioBuffer = await decodeAudioData(bytes, audioContext, 24000, 1);
         
