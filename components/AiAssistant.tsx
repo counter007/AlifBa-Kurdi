@@ -35,39 +35,55 @@ const AiAssistant: React.FC<AiAssistantProps> = ({ currentLetter, theme }) => {
     setInput('');
     setIsTyping(true);
 
-    try {
-      const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
-      if (!apiKey) {
-        throw new Error("Gemini API key is missing.");
-      }
-      const ai = new GoogleGenAI({ apiKey });
-      const prompt = `Hûn mamosteyekî kurdî yê bi zaravayê Badînî (Behdîni) ne. 
-        Bi tenê bi zaravayê Badînî û bi tîpên erebî (ئەلفبێی ئارامی) bersiv bidin.
-        Current letter context: ${currentLetter ? currentLetter.char + ' (' + currentLetter.name + ')' : 'None'}.
-        User asks: ${input}. 
-        Bersivên we bila kurt, hander û bi zaravayê devera Behdînan bin.`;
+    const keys = [
+      process.env.GEMINI_API_KEY,
+      process.env.GEMINI_API_KEY_2,
+      process.env.GEMINI_API_KEY_3,
+      process.env.API_KEY
+    ].filter(Boolean) as string[];
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt,
-        config: {
-          systemInstruction: "Tu mamosteyekî دلۆڤان و زیرەک یێ زمانێ کوردی ب زارۆڤێ بادینی یی. تو دێ ب شێوازەکێ سادە و خۆش دگەل زارۆکان ئاخڤی. هەمی بەرسڤێن تە دێ ب کوردییا بادینی بن.",
-          temperature: 0.7,
-        }
-      });
-
-      const aiText = response.text || "ببورە، من فێم نەکرد. (ببۆره‌، من نه‌زانی)";
-      setMessages(prev => [...prev, { role: 'model', text: aiText }]);
-    } catch (error) {
-      console.error(error);
-      setMessages(prev => [...prev, { role: 'model', text: "ئاریشەیەک د پەیوەندیێ دا هەبوو دگەل ماموستای." }]);
-    } finally {
+    if (keys.length === 0) {
+      setMessages(prev => [...prev, { role: 'model', text: "ئاریشەیەک هەبوو: کلیلێ API نەدیارە. (API Key missing.)" }]);
       setIsTyping(false);
+      return;
     }
+
+    let success = false;
+    for (const apiKey of keys) {
+      if (success) break;
+      try {
+        const ai = new GoogleGenAI({ apiKey });
+        const prompt = `Hûn mamosteyekî kurdî yê bi zaravayê Badînî (Behdîni) ne. 
+          Bi tenê bi zaravayê Badînî û bi tîpên erebî (ئەلفبێی ئارامی) bersiv bidin.
+          Current letter context: ${currentLetter ? currentLetter.char + ' (' + currentLetter.name + ')' : 'None'}.
+          User asks: ${input}. 
+          Bersivên we bila kurt, hander û bi zaravayێ devera Behdînan bin.`;
+
+        const response = await ai.models.generateContent({
+          model: 'gemini-3-flash-preview',
+          contents: prompt,
+          config: {
+            systemInstruction: "Tu mamosteyekî دلۆڤان و زیرەک یێ زمانێ کوردی ب زارۆڤێ بادینی يی. تو دێ ب شێوازەکێ سادە و خۆش دگەل زارۆکان ئاخڤی. هەمی بەرسڤێن تە دێ ب کوردییا بادینی بن.",
+            temperature: 0.7,
+          }
+        });
+
+        const aiText = response.text || "ببورە، من فێم نەکرد. (ببۆره‌، من نه‌زانی)";
+        setMessages(prev => [...prev, { role: 'model', text: aiText }]);
+        success = true;
+      } catch (error) {
+        console.warn("API Key failed in Assistant, trying next...");
+      }
+    }
+
+    if (!success) {
+      setMessages(prev => [...prev, { role: 'model', text: "ئاریشەیەک د پەیوەندیێ دا هەبوو دگەل ماموستای. (Connection error with AI Teacher.)" }]);
+    }
+    setIsTyping(false);
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 flex flex-col h-[400px]">
+    <div className="bg-white rounded-2xl shadow-xl p-4 flex flex-col h-[350px] md:h-[400px]">
       <h3 className={`text-xl font-bold ${themeColors.primary} mb-2 border-b pb-2 flex items-center gap-2`}>
         <span className="text-2xl">🎓</span> مامۆستایێ زیرەک (AI Teacher)
       </h3>
@@ -78,7 +94,7 @@ const AiAssistant: React.FC<AiAssistantProps> = ({ currentLetter, theme }) => {
       >
         {messages.length === 0 && (
           <p className="text-gray-500 text-center italic mt-4">
-            پرسیارێن خوە ل سەر پیتان بکە! (Ask in Badini!)
+            پرسيارێن خوە ل سەر پيتان بکە! (Ask in Badini!)
           </p>
         )}
         {messages.map((m, i) => (
@@ -98,7 +114,7 @@ const AiAssistant: React.FC<AiAssistantProps> = ({ currentLetter, theme }) => {
           </div>
         ))}
         {isTyping && (
-          <div className="text-left text-gray-400 animate-pulse">مامۆستا دنڤیسیت...</div>
+          <div className="text-left text-gray-400 animate-pulse">مامۆستا دنڤيسيت...</div>
         )}
       </div>
 

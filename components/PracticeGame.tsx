@@ -80,7 +80,11 @@ const PracticeGame: React.FC<PracticeGameProps> = ({ theme }) => {
         <div className="flex flex-col items-center gap-2">
           <p className="text-gray-500">گوهێ خوە بدە دەنگی (Listen):</p>
           {currentLetter && (
-            <LetterSoundButton char={currentLetter.char} name={currentLetter.name} />
+            <LetterSoundButton 
+              char={currentLetter.char} 
+              name={currentLetter.name} 
+              audioUrl={currentLetter.audioUrl} 
+            />
           )}
         </div>
 

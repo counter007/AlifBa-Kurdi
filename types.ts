@@ -4,6 +4,7 @@ export interface Example {
   translation: string;
   imageUrl?: string;
   searchKeyword?: string;
+  audioUrl?: string;
 }
 
 export interface KurdishLetter {
@@ -14,6 +15,7 @@ export interface KurdishLetter {
   examples?: Example[];
   imageUrl?: string;
   searchKeyword?: string;
+  audioUrl?: string;
 }
 
 export type AppView = 'theme-selection' | 'home' | 'letter-detail' | 'print-view';

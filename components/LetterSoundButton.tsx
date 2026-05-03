@@ -5,9 +5,10 @@ import { GoogleGenAI, Modality } from "@google/genai";
 interface LetterSoundButtonProps {
   char: string;
   name: string;
+  audioUrl?: string;
 }
 
-const LetterSoundButton: React.FC<LetterSoundButtonProps> = ({ char, name }) => {
+const LetterSoundButton: React.FC<LetterSoundButtonProps> = ({ char, name, audioUrl }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,9 +30,6 @@ const LetterSoundButton: React.FC<LetterSoundButtonProps> = ({ char, name }) => 
     sampleRate: number,
     numChannels: number,
   ): Promise<AudioBuffer> => {
-    // Ensure we correctly view the bytes as Int16.
-    // data.buffer might be larger than data.byteLength if it's a shared buffer,
-    // but here it's freshly created. However, offset might be needed.
     const dataInt16 = new Int16Array(
       data.buffer,
       data.byteOffset,
@@ -51,57 +49,86 @@ const LetterSoundButton: React.FC<LetterSoundButtonProps> = ({ char, name }) => 
 
   const playSound = async () => {
     if (isPlaying || isLoading) return;
+
+    // Use static audio if provided
+    if (audioUrl) {
+      setIsPlaying(true);
+      const audio = new Audio(audioUrl);
+      audio.onended = () => setIsPlaying(false);
+      audio.onerror = () => {
+        console.error("Static audio failed to load:", audioUrl);
+        setIsPlaying(false);
+      };
+      audio.play().catch(err => {
+        console.error("Playback error:", err);
+        setIsPlaying(false);
+      });
+      return;
+    }
+
     setIsLoading(true);
 
-    try {
-      const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
-      if (!apiKey) {
-        alert("تێبینی: کلیلێ API یێ نەدیارە. ژ کەرەما خوە کلیلێ GEMINI_API_KEY ل ناڤ Settings دا زێدە بکە.\n(Note: API Key missing. Please add GEMINI_API_KEY to settings.)");
-        setIsLoading(false);
-        return;
-      }
-      const ai = new GoogleGenAI({ apiKey });
-      const prompt = `Say only the phonetic sound of the Kurdish character "${char}" once, clearly and slowly. Do not say any other words.`;
+    const keys = [
+      process.env.GEMINI_API_KEY,
+      process.env.GEMINI_API_KEY_2,
+      process.env.GEMINI_API_KEY_3,
+      process.env.API_KEY
+    ].filter(Boolean) as string[];
 
-      const response = await ai.models.generateContent({
-        model: "gemini-3.1-flash-tts-preview",
-        contents: [{ parts: [{ text: prompt }] }],
-        config: {
-          responseModalities: [Modality.AUDIO],
-          speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: 'Kore' }, // 'Kore' is friendly
+    if (keys.length === 0) {
+      alert("تێبینی: کلیلێ API یێ نەدیارە. ژ کەرەما خوە کلیلێ GEMINI_API_KEY ل ناڤ Settings دا زێدە بکە.\n(Note: API Key missing.)");
+      setIsLoading(false);
+      return;
+    }
+
+    let success = false;
+    for (const apiKey of keys) {
+      if (success) break;
+      
+      try {
+        const ai = new GoogleGenAI({ apiKey });
+        const prompt = `Say only the phonetic sound of the Kurdish character "${char}" once, clearly and slowly. Do not say any other words.`;
+
+        const response = await ai.models.generateContent({
+          model: "gemini-3.1-flash-tts-preview",
+          contents: [{ parts: [{ text: prompt }] }],
+          config: {
+            responseModalities: [Modality.AUDIO],
+            speechConfig: {
+              voiceConfig: {
+                prebuiltVoiceConfig: { voiceName: 'Kore' },
+              },
             },
           },
-        },
-      });
+        });
 
-      const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-      if (base64Audio) {
-        setIsLoading(false);
-        setIsPlaying(true);
-        const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
-        const audioContext = new AudioContextClass({ sampleRate: 24000 });
-        
-        // Ensure context is running (fixes some browser idle issues)
-        if (audioContext.state === 'suspended') {
-          await audioContext.resume();
+        const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+        if (base64Audio) {
+          success = true;
+          setIsLoading(false);
+          setIsPlaying(true);
+          const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
+          const audioContext = new AudioContextClass({ sampleRate: 24000 });
+          
+          if (audioContext.state === 'suspended') {
+            await audioContext.resume();
+          }
+
+          const bytes = decodeBase64(base64Audio);
+          const audioBuffer = await decodeAudioData(bytes, audioContext, 24000, 1);
+          
+          const source = audioContext.createBufferSource();
+          source.buffer = audioBuffer;
+          source.connect(audioContext.destination);
+          source.onended = () => setIsPlaying(false);
+          source.start();
         }
-
-        const bytes = decodeBase64(base64Audio);
-        const audioBuffer = await decodeAudioData(bytes, audioContext, 24000, 1);
-        
-        const source = audioContext.createBufferSource();
-        source.buffer = audioBuffer;
-        source.connect(audioContext.destination);
-        source.onended = () => setIsPlaying(false);
-        source.start();
-      } else {
-        setIsLoading(false);
-        setIsPlaying(false);
+      } catch (error) {
+        console.warn("API Key for sound failed. Trying next...");
       }
-    } catch (error) {
-      console.error("TTS failed:", error);
+    }
+
+    if (!success) {
       setIsLoading(false);
       setIsPlaying(false);
     }

@@ -23,7 +23,7 @@ const ExampleImage: React.FC<ExampleImageProps> = ({ word, translation, customUr
   const imageUrl = customUrl || fallbackUrl;
 
   return (
-    <div className="w-32 h-32 bg-white rounded-2xl border-2 border-blue-100 shadow-inner flex items-center justify-center overflow-hidden relative group">
+    <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl border-2 border-blue-100 shadow-inner flex items-center justify-center overflow-hidden relative group shrink-0">
       <img 
         src={imageUrl} 
         alt={word} 

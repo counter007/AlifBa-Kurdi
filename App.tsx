@@ -84,20 +84,20 @@ const App: React.FC = () => {
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="max-w-4xl w-full text-center relative z-10"
+        className="max-w-4xl w-full text-center relative z-10 px-4"
       >
-        <h1 className="text-4xl md:text-5xl font-black text-gray-800 mb-4">بخێر بێی بۆ دەفتەرا پیتان! 👋</h1>
-        <p className="text-xl text-gray-500 mb-12">کى دێ فێری پیتان بیت؟ (Choose a profile)</p>
+        <h1 className="text-3xl md:text-5xl font-black text-gray-800 mb-4">بخێر بێی بۆ دەفتەرا پیتان! 👋</h1>
+        <p className="text-lg md:text-xl text-gray-500 mb-12">کى دێ فێری پیتان بیت؟ (Choose a profile)</p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => selectTheme('boy')}
-            className="bg-blue-50 p-10 rounded-[3rem] border-4 border-blue-200 hover:border-blue-500 transition-all shadow-xl group"
+            className="bg-blue-50 p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] border-4 border-blue-200 hover:border-blue-500 transition-all shadow-xl group"
           >
-            <div className="text-9xl mb-6 group-hover:animate-bounce">👦</div>
-            <h2 className="text-4xl font-bold text-blue-800">کور (Boy)</h2>
+            <div className="text-7xl md:text-9xl mb-4 md:mb-6 group-hover:animate-bounce">👦</div>
+            <h2 className="text-2xl md:text-4xl font-bold text-blue-800">کور (Boy)</h2>
           </motion.button>
 
           <motion.button
@@ -148,11 +148,11 @@ const App: React.FC = () => {
         <motion.h1 
           animate={{ scale: [1, 1.02, 1] }}
           transition={{ repeat: Infinity, duration: 3 }}
-          className={`text-5xl md:text-6xl font-extrabold ${themeClasses.primaryText} mb-4`}
+          className={`text-3xl md:text-5xl lg:text-6xl font-extrabold ${themeClasses.primaryText} mb-4 whitespace-pre-wrap px-4`}
         >
           دەفتەرا فێربوونا پیتێن کوردى 🎨
         </motion.h1>
-        <p className={`text-xl ${themeClasses.secondaryText}`}>ئەلفبێیا کوردی ب کەیف و یاری فێرببە!</p>
+        <p className={`text-lg md:text-xl ${themeClasses.secondaryText} px-4`}>ئەلفبێیا کوردی ب کەیف و یاری فێرببە!</p>
         
         <div className="mt-6 flex flex-wrap justify-center gap-4">
           <div className={`bg-white px-6 py-2 rounded-full shadow-md border-2 border-yellow-200 flex items-center gap-2`}>
@@ -233,23 +233,27 @@ const App: React.FC = () => {
           ⬅️ ڤەگەرە لاپەرێ سەرەکى (Back Home)
         </button>
 
-        <div className="grid md:grid-cols-2 gap-12 bg-white p-6 md:p-10 rounded-[3rem] shadow-2xl relative overflow-hidden min-h-[600px]">
-          <div className={`absolute top-0 right-0 w-32 h-32 ${themeClasses.accentBg} rounded-bl-[100%] z-0`}></div>
+        <div className="grid md:grid-cols-2 gap-6 lg:gap-12 bg-white p-4 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl relative overflow-hidden">
+          <div className={`absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 ${themeClasses.accentBg} rounded-bl-[100%] z-0`}></div>
           
-          <div className="relative z-10">
-            <div className="text-center mb-8 flex flex-col items-center">
-              <h2 className={`text-8xl font-black ${userTheme === 'girl' ? 'text-pink-900' : 'text-blue-900'} mb-2`}>{selectedLetter.char}</h2>
+          <div className="relative z-10 flex flex-col">
+            <div className="text-center mb-6 flex flex-col items-center">
+              <h2 className={`text-7xl md:text-8xl font-black ${userTheme === 'girl' ? 'text-pink-900' : 'text-blue-900'} mb-2`}>{selectedLetter.char}</h2>
               <div className={`flex items-center gap-4 ${themeClasses.lightBg} px-6 py-2 rounded-full border ${themeClasses.border}`}>
-                <LetterSoundButton char={selectedLetter.char} name={selectedLetter.name} />
+                <LetterSoundButton 
+                  char={selectedLetter.char} 
+                  name={selectedLetter.name} 
+                  audioUrl={selectedLetter.audioUrl} 
+                />
               </div>
             </div>
 
             <div className="space-y-4 mb-6">
-              <div className={`${themeClasses.lightBg} p-6 rounded-2xl border-2 ${themeClasses.border} flex items-center justify-between gap-4`}>
+              <div className={`${themeClasses.lightBg} p-4 md:p-6 rounded-2xl border-2 ${themeClasses.border} flex items-center justify-between gap-4`}>
                 <div className="flex-1">
-                  <p className="text-gray-500 mb-1">پەیڤەکا نوی (Example):</p>
-                  <p className={`text-4xl font-bold ${userTheme === 'girl' ? 'text-pink-800' : 'text-blue-800'} mb-2`}>{selectedLetter.exampleWord}</p>
-                  <p className="text-lg text-gray-400 italic">Mane: {selectedLetter.exampleTranslation}</p>
+                  <p className="text-gray-500 text-sm mb-1">پەیڤەکا نوی (Example):</p>
+                  <p className={`text-3xl md:text-4xl font-bold ${userTheme === 'girl' ? 'text-pink-800' : 'text-blue-800'} mb-1 md:mb-2`}>{selectedLetter.exampleWord}</p>
+                  <p className="text-base text-gray-400 italic">Mane: {selectedLetter.exampleTranslation}</p>
                 </div>
                 <ExampleImage 
                   word={selectedLetter.exampleWord} 
@@ -260,10 +264,10 @@ const App: React.FC = () => {
               </div>
 
               {selectedLetter.examples?.map((ex, i) => (
-                <div key={i} className={`${themeClasses.lightBg} p-6 rounded-2xl border-2 ${themeClasses.border} flex items-center justify-between gap-4`}>
+                <div key={i} className={`${themeClasses.lightBg} p-4 md:p-6 rounded-2xl border-2 ${themeClasses.border} flex items-center justify-between gap-4`}>
                   <div className="flex-1">
-                    <p className={`text-4xl font-bold ${userTheme === 'girl' ? 'text-pink-800' : 'text-blue-800'} mb-2`}>{ex.word}</p>
-                    <p className="text-lg text-gray-400 italic">Mane: {ex.translation}</p>
+                    <p className={`text-3xl md:text-4xl font-bold ${userTheme === 'girl' ? 'text-pink-800' : 'text-blue-800'} mb-1 md:mb-2`}>{ex.word}</p>
+                    <p className="text-base text-gray-400 italic">Mane: {ex.translation}</p>
                   </div>
                   <ExampleImage 
                     word={ex.word} 
@@ -275,10 +279,12 @@ const App: React.FC = () => {
               ))}
             </div>
 
-            <AiAssistant currentLetter={selectedLetter} theme={userTheme} />
+            <div className="mt-auto md:hidden mb-6">
+               <AiAssistant currentLetter={selectedLetter} theme={userTheme} />
+            </div>
           </div>
 
-          <div className="flex flex-col items-center justify-start pt-4">
+          <div className="flex flex-col items-center justify-start pt-4 w-full">
             <h3 className="text-xl font-bold text-gray-700 mb-4">لڤێرێ بنڤیسە (Trace Here)</h3>
             <TracingBoard 
               letter={selectedLetter.char} 
@@ -291,10 +297,10 @@ const App: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="mt-6 p-4 bg-yellow-100 border-2 border-yellow-400 rounded-2xl text-center"
+                  className="mt-6 p-4 bg-yellow-100 border-2 border-yellow-400 rounded-2xl text-center w-full"
                 >
-                  <p className="text-2xl font-bold text-yellow-800">دەستخۆش! تو فێربووی 🌟</p>
-                  <p className="text-sm text-yellow-600">Well done! You mastered this letter.</p>
+                  <p className="text-xl md:text-2xl font-bold text-yellow-800">دەستخۆش! تو فێربووی 🌟</p>
+                  <p className="text-xs md:text-sm text-yellow-600">Well done! You mastered this letter.</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -304,6 +310,10 @@ const App: React.FC = () => {
                 <span>🌟</span> فێربوو (Learned)
               </div>
             )}
+            
+            <div className="hidden md:block w-full mt-8">
+               <AiAssistant currentLetter={selectedLetter} theme={userTheme} />
+            </div>
           </div>
         </div>
       </motion.div>

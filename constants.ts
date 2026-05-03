@@ -2,7 +2,19 @@
 import { KurdishLetter } from './types';
 
 export const KURDISH_ALPHABET: KurdishLetter[] = [
-  { char: 'ئـ', name: 'هەمزە', exampleWord: 'ئالا', exampleTranslation: 'Flag', searchKeyword: 'flag', examples: [{ word: 'ئاسک', translation: 'Deer', searchKeyword: 'deer' }, { word: 'ئەزمان', translation: 'Tongue/Language', searchKeyword: 'tongue' }] },
+  { 
+    char: 'ئـ', 
+    name: 'هەمزە', 
+    exampleWord: 'ئالا', 
+    exampleTranslation: 'Flag', 
+    searchKeyword: 'flag', 
+    audioUrl: '/audio/hamza.mp3', // مثال لـ رابط ملف صوتي ثابت
+    imageUrl: '/images/flag.png',   // مثال لـ رابط صورة ثابتة
+    examples: [
+      { word: 'ئاسک', translation: 'Deer', searchKeyword: 'deer', audioUrl: '/audio/ask.mp3' }, 
+      { word: 'ئەزمان', translation: 'Tongue/Language', searchKeyword: 'tongue' }
+    ] 
+  },
   { char: 'ا', name: 'ئەلف', exampleWord: 'ئاگر', exampleTranslation: 'Fire', searchKeyword: 'fire', examples: [{ word: 'ئاڤ', translation: 'Water', searchKeyword: 'water' }, { word: 'ئەرد', translation: 'Ground', searchKeyword: 'earth' }] },
   { char: 'ب', name: 'بێ', exampleWord: 'بەفر', exampleTranslation: 'Snow', searchKeyword: 'snow', examples: [{ word: 'بەرخ', translation: 'Lamb', searchKeyword: 'lamb' }, { word: 'باران', translation: 'Rain', searchKeyword: 'rain' }] },
   { char: 'پ', name: 'پێ', exampleWord: 'پشیک', exampleTranslation: 'Cat', searchKeyword: 'cat', examples: [{ word: 'پەلاتینک', translation: 'Butterfly', searchKeyword: 'butterfly' }, { word: 'پێلاڤ', translation: 'Shoes', searchKeyword: 'shoes' }] },
@@ -33,7 +45,7 @@ export const KURDISH_ALPHABET: KurdishLetter[] = [
   { char: 'وو', name: 'وو (Û)', exampleWord: 'دوور', exampleTranslation: 'Far', searchKeyword: 'telescope', examples: [{ word: 'لوولەک', translation: 'Tube', searchKeyword: 'cylinder' }] },
   { char: 'ۆ', name: 'ۆ (Ô)', exampleWord: 'رۆژ', exampleTranslation: 'Sun', searchKeyword: 'sun', examples: [{ word: 'گۆڵچى', translation: 'goal keeper', searchKeyword: 'soccer,player' }, { word: 'گۆشت', translation: 'Meat', searchKeyword: 'steak' }] },
   { char: 'هـ', name: 'هێ', exampleWord: 'هێک', exampleTranslation: 'Egg', searchKeyword: 'egg', examples: [{ word: 'هەسپ', translation: 'Horse', searchKeyword: 'horse' }, { word: 'هەنگ', translation: 'Bee', searchKeyword: 'bee' }] },
-  { char: 'ه', name: 'ڤەکێشاو (E)', exampleWord: 'پەنجەر', exampleTranslation: 'Window', searchKeyword: 'window', examples: [{ word: 'نامە', translation: 'Letter', searchKeyword: 'envelope' }, { word: 'کاسە', translation: 'Bowl', searchKeyword: 'bowl' }] },
+  { char: 'ـه', name: 'ڤەکێشاو (E)', exampleWord: 'پەنجەر', exampleTranslation: 'Window', searchKeyword: 'window', examples: [{ word: 'نامە', translation: 'Letter', searchKeyword: 'envelope' }, { word: 'کاسە', translation: 'Bowl', searchKeyword: 'bowl' }] },
   { char: 'ی', name: 'ێی', exampleWord: 'یاری', exampleTranslation: 'Game', searchKeyword: 'toys', examples: [{ word: 'دایک', translation: 'mother', searchKeyword: 'mother' }, { word: 'یەک', translation: 'One', searchKeyword: 'number1' }] },
   { char: 'ێ', name: 'ێ (Ê)', exampleWord: 'پێلاڤ', exampleTranslation: 'Shoes', searchKeyword: 'shoes', examples: [{ word: 'سێ', translation: 'Three', searchKeyword: 'number3' }, { word: 'بێ', translation: 'Without', searchKeyword: 'empty' }] },
 ];

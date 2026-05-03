@@ -15,33 +15,14 @@ const COLORS = [
 ];
 
 const TracingBoard: React.FC<TracingBoardProps> = ({ letter, onComplete }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
   const [brushColor, setBrushColor] = useState(COLORS[0].value);
+  const [canvasSize, setCanvasSize] = useState({ width: 400, height: 400 });
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const context = canvas.getContext('2d');
-      if (context) {
-        context.lineCap = 'round';
-        context.lineJoin = 'round';
-        context.lineWidth = 12;
-        context.strokeStyle = brushColor;
-        setCtx(context);
-        drawBackground(context, canvas.width, canvas.height);
-      }
-    }
-  }, [letter]);
-
-  useEffect(() => {
-    if (ctx) {
-      ctx.strokeStyle = brushColor;
-    }
-  }, [brushColor, ctx]);
-
-  const drawBackground = (c: CanvasRenderingContext2D, w: number, h: number) => {
+  const drawBackground = useCallback((c: CanvasRenderingContext2D, w: number, h: number, text: string) => {
     c.clearRect(0, 0, w, h);
     c.fillStyle = '#ffffff';
     c.fillRect(0, 0, w, h);
@@ -55,17 +36,53 @@ const TracingBoard: React.FC<TracingBoardProps> = ({ letter, onComplete }) => {
     c.moveTo(0, h * 0.75); c.lineTo(w, h * 0.75);
     c.stroke();
 
-    // Large letter in background
-    c.font = 'bold 200px Vazirmatn';
+    // Large letter in background - responsive font size
+    const fontSize = Math.min(w, h) * 0.6;
+    c.font = `bold ${fontSize}px Vazirmatn, sans-serif`;
     c.fillStyle = '#f3f4f6';
     c.textAlign = 'center';
     c.textBaseline = 'middle';
-    c.fillText(letter, w / 2, h / 2);
+    c.fillText(text, w / 2, h / 2);
     
     // Reset brush settings
-    c.strokeStyle = '#3b82f6';
+    c.strokeStyle = brushColor;
     c.lineWidth = 10;
-  };
+  }, [brushColor]);
+
+  // Handle Resize
+  useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current) {
+        const width = Math.min(containerRef.current.offsetWidth, 500);
+        setCanvasSize({ width, height: width });
+      }
+    };
+
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const context = canvas.getContext('2d');
+      if (context) {
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
+        context.lineWidth = 12;
+        context.strokeStyle = brushColor;
+        setCtx(context);
+        drawBackground(context, canvasSize.width, canvasSize.height, letter);
+      }
+    }
+  }, [letter, canvasSize, drawBackground]);
+
+  useEffect(() => {
+    if (ctx) {
+      ctx.strokeStyle = brushColor;
+    }
+  }, [brushColor, ctx]);
 
   const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
     setIsDrawing(true);
@@ -100,13 +117,13 @@ const TracingBoard: React.FC<TracingBoardProps> = ({ letter, onComplete }) => {
 
   const clear = () => {
     if (ctx && canvasRef.current) {
-      drawBackground(ctx, canvasRef.current.width, canvasRef.current.height);
+      drawBackground(ctx, canvasSize.width, canvasSize.height, letter);
     }
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex gap-2 mb-4">
+    <div ref={containerRef} className="flex flex-col items-center w-full max-w-[500px]">
+      <div className="flex flex-wrap justify-center gap-2 mb-4">
         {COLORS.map((color) => (
           <button
             key={color.value}
@@ -120,9 +137,9 @@ const TracingBoard: React.FC<TracingBoardProps> = ({ letter, onComplete }) => {
       
       <canvas
         ref={canvasRef}
-        width={400}
-        height={400}
-        className="border-4 border-blue-200 rounded-3xl shadow-inner cursor-crosshair touch-none bg-white"
+        width={canvasSize.width}
+        height={canvasSize.height}
+        className="border-4 border-blue-200 rounded-3xl shadow-inner cursor-crosshair touch-none bg-white max-w-full"
         onMouseDown={startDrawing}
         onMouseMove={draw}
         onMouseUp={stopDrawing}
@@ -137,7 +154,7 @@ const TracingBoard: React.FC<TracingBoardProps> = ({ letter, onComplete }) => {
           onClick={clear}
           className="px-6 py-2 bg-gray-200 text-gray-700 rounded-full font-bold hover:bg-gray-300 transition-colors"
         >
-          فڕێبدە (Clear)
+          ژێببە (Clear)
         </button>
         <button
           onClick={() => {
