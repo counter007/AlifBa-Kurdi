@@ -8,6 +8,10 @@ import AiAssistant from './components/AiAssistant';
 import ExampleImage from './components/ExampleImage';
 import LetterSoundButton from './components/LetterSoundButton';
 import PracticeGame from './components/PracticeGame';
+import BackgroundMusic from './components/BackgroundMusic';
+import CatchTheLetterGame from './components/CatchTheLetterGame';
+import MagicPianoGame from './components/MagicPianoGame';
+import CandyCrushGame from './components/CandyCrushGame';
 
 const App: React.FC = () => {
   const [view, setView] = useState<AppView>('theme-selection');
@@ -160,6 +164,12 @@ const App: React.FC = () => {
             <span className="font-bold text-yellow-700">پیتێن تو فێربووی (Progress): {masteredLetters.length} / {KURDISH_ALPHABET.length}</span>
           </div>
           <button 
+            onClick={() => setView('games-menu')}
+            className={`bg-white border-2 px-6 py-2 rounded-full font-bold transition shadow-md flex items-center gap-2 border-purple-600 text-purple-600 hover:bg-purple-50`}
+          >
+            <span>🎮</span> یاری بکە (Play Games)
+          </button>
+          <button 
             onClick={() => window.print()}
             className={`bg-white border-2 px-6 py-2 rounded-full font-bold transition shadow-md flex items-center gap-2 ${themeClasses.button}`}
           >
@@ -190,28 +200,98 @@ const App: React.FC = () => {
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-8 items-start mb-12 relative z-10">
-        <PracticeGame theme={userTheme} />
-        <div className="bg-yellow-100 p-8 rounded-[2rem] border-l-8 border-yellow-400 shadow-md">
-          <h2 className="text-2xl font-bold text-yellow-800 mb-4">رێ نیشاندەر بۆ سەمیانان  (Parents) 👨‍👩‍👧‍👦</h2>
-          <ul className="space-y-4 text-yellow-900">
-            <li className="flex gap-3 items-start text-lg">
-              <span className="bg-yellow-200 p-1 rounded">✅</span> هەر رۆژ زاروکێ خو فێرى پیتەکێ بکە.
-            </li>
-            <li className="flex gap-3 items-start text-lg">
-              <span className="bg-yellow-200 p-1 rounded">✅</span> دگەل هەر پیتەکێ پەیڤەکا نوی بێژن.
-            </li>
-            <li className="flex gap-3 items-start text-lg">
-              <span className="bg-yellow-200 p-1 rounded">✅</span> پاش تەمامکرنا هەر رۆپەلەکی، زارۆیێ خوە خەلات بکەن.
-            </li>
-            <li className="flex gap-3 items-start text-lg">
-              <span className="bg-yellow-200 p-1 rounded">✅</span> ژ مامۆستایێ زیرەک (AI) پسیاران بکەن.
-            </li>
-          </ul>
-        </div>
+      <div className="bg-yellow-100 p-8 rounded-[2rem] border-l-8 border-yellow-400 shadow-md mb-12 relative z-10">
+        <h2 className="text-2xl font-bold text-yellow-800 mb-4">رێ نیشاندەر بۆ سەمیانان  (Parents) 👨‍👩‍👧‍👦</h2>
+        <ul className="space-y-4 text-yellow-900">
+          <li className="flex gap-3 items-start text-lg">
+            <span className="bg-yellow-200 p-1 rounded">✅</span> هەر رۆژ زاروکێ خو فێرى پیتەکێ بکە.
+          </li>
+          <li className="flex gap-3 items-start text-lg">
+            <span className="bg-yellow-200 p-1 rounded">✅</span> دگەل هەر پیتەکێ پەیڤەکا نوی بێژن.
+          </li>
+          <li className="flex gap-3 items-start text-lg">
+            <span className="bg-yellow-200 p-1 rounded">✅</span> پاش تەمامکرنا هەر رۆپەلەکی، زارۆیێ خوە خەلات بکەن.
+          </li>
+          <li className="flex gap-3 items-start text-lg">
+            <span className="bg-yellow-200 p-1 rounded">✅</span> ژ مامۆستایێ زیرەک (AI) پسیاران بکەن.
+          </li>
+        </ul>
       </div>
 
       <AiAssistant theme={userTheme} />
+    </motion.div>
+  );
+
+  const renderGamesMenu = () => (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="max-w-4xl mx-auto p-6"
+    >
+      <button 
+        onClick={goHome}
+        className={`mb-8 flex items-center gap-2 ${themeClasses.secondaryText} font-bold hover:translate-x-[-10px] transition-transform`}
+      >
+        ⬅️ ڤەگەرە لاپەرێ سەرەکى (Back Home)
+      </button>
+
+      <h2 className={`text-4xl md:text-5xl font-black ${themeClasses.primaryText} mb-10 text-center`}>
+        بەشێ یاریان 🎮 (Games Zone)
+      </h2>
+
+      <div className="grid md:grid-cols-2 gap-8">
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-[2.5rem] shadow-xl border-4 border-yellow-200">
+            <h3 className="text-2xl font-bold text-yellow-800 mb-4 text-center">یاریا پیتان (Practice Game)</h3>
+            <PracticeGame theme={userTheme} />
+          </div>
+        </div>
+
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-white p-8 rounded-[3rem] shadow-2xl border-4 border-pink-200 flex flex-col items-center justify-center text-center group relative overflow-hidden"
+            onClick={() => setView('candy-crush')}
+          >
+            <div className="absolute inset-0 bg-pink-50 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="text-8xl mb-6 relative z-10 group-hover:animate-bounce">🍭</div>
+            <h3 className="text-3xl font-black text-pink-800 mb-2 relative z-10">یاریا شریناهیان (Candy) 🍬</h3>
+            <p className="text-pink-600 text-lg relative z-10">سێ وێنێن وەکی ئێک رێز بکە و خالان بگرە!</p>
+            <div className="mt-8 px-8 py-3 bg-pink-600 text-white rounded-full font-bold shadow-lg relative z-10">
+              دەستپێبکە (Play Candy)
+            </div>
+          </motion.button>
+
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-white p-8 rounded-[3rem] shadow-2xl border-4 border-indigo-200 flex flex-col items-center justify-center text-center group relative overflow-hidden"
+            onClick={() => setView('magic-piano')}
+          >
+            <div className="absolute inset-0 bg-indigo-50 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="text-8xl mb-6 relative z-10 group-hover:animate-bounce">🎹</div>
+            <h3 className="text-3xl font-black text-indigo-800 mb-2 relative z-10">پیانۆیا جادوویی 🎵</h3>
+            <p className="text-indigo-600 text-lg relative z-10">ئاوازێن جوان دروست بکە و خالان بگرە!</p>
+            <div className="mt-8 px-8 py-3 bg-indigo-600 text-white rounded-full font-bold shadow-lg relative z-10">
+              دەستپێبکە (Play Piano)
+            </div>
+          </motion.button>
+
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-white p-8 rounded-[3rem] shadow-2xl border-4 border-sky-200 flex flex-col items-center justify-center text-center group relative overflow-hidden"
+            onClick={() => setView('catch-the-letter')}
+          >
+          <div className="absolute inset-0 bg-sky-50 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="text-8xl mb-6 relative z-10 group-hover:animate-bounce">🐥</div>
+          <h3 className="text-3xl font-black text-sky-800 mb-2 relative z-10">یاریا نێچیرا پیتان 🚀</h3>
+          <p className="text-sky-600 text-lg relative z-10">پیتێن درست بگرە و خالان کۆم بکە!</p>
+          <div className="mt-8 px-8 py-3 bg-sky-600 text-white rounded-full font-bold shadow-lg relative z-10">
+            دەستپێبکە (Play Now)
+          </div>
+        </motion.button>
+      </div>
     </motion.div>
   );
 
@@ -351,7 +431,21 @@ const App: React.FC = () => {
     <div className={`min-h-screen pb-20 transition-colors duration-500 ${themeClasses.bg}`}>
       <div className="no-print">
         {view === 'theme-selection' ? renderThemeSelection() : 
-         view === 'home' ? renderHome() : renderLetterDetail()}
+         view === 'home' ? renderHome() : 
+         view === 'games-menu' ? renderGamesMenu() :
+         view === 'catch-the-letter' ? (
+           <div className="p-6">
+             <CatchTheLetterGame onBack={() => setView('games-menu')} />
+           </div>
+         ) : view === 'magic-piano' ? (
+           <div className="p-6">
+             <MagicPianoGame onBack={() => setView('games-menu')} />
+           </div>
+         ) : view === 'candy-crush' ? (
+           <div className="p-6">
+             <CandyCrushGame onBack={() => setView('games-menu')} />
+           </div>
+         ) : renderLetterDetail()}
       </div>
       {renderPrintPages()}
       
@@ -363,6 +457,7 @@ const App: React.FC = () => {
           <p>ئیمێل: i.yousif1993@gmail.com</p>
         </div>
       </footer>
+      <BackgroundMusic />
     </div>
   );
 };

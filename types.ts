@@ -18,7 +18,7 @@ export interface KurdishLetter {
   audioUrl?: string;
 }
 
-export type AppView = 'theme-selection' | 'home' | 'letter-detail' | 'print-view';
+export type AppView = 'theme-selection' | 'home' | 'letter-detail' | 'print-view' | 'catch-the-letter' | 'games-menu' | 'magic-piano' | 'candy-crush';
 
 export type UserTheme = 'boy' | 'girl';
 
